@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "mover.generated.h"
+#include "Mover.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PRACTICE_API Umover : public UActorComponent
+class PRACTICE_API UMover : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	Umover();
+	UMover();
 
 protected:
 	// Called when the game starts
@@ -24,5 +24,15 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+private:
+	UPROPERTY(EditAnywhere)
+	FVector MoveOffset;
+
+	UPROPERTY(EditAnywhere)
+	float MoveTime = 4;
+
+	UPROPERTY(EditAnywhere)
+	bool shouldmove = false;
+
+	FVector OriginalLocation;
 };

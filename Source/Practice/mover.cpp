@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "mover.h"
-
+#include "Mover.h"
+#include "Math/UnrealMathUtility.h"
 // Sets default values for this component's properties
-Umover::Umover()
+UMover::UMover()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -15,27 +15,26 @@ Umover::Umover()
 
 
 // Called when the game starts
-void Umover::BeginPlay()
+void UMover::BeginPlay()
 {
 	Super::BeginPlay();
-
+	OriginalLocation = GetOwner()->GetActorLocation();
 	// ...
 	
 }
 
 
 // Called every frame
-void Umover::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UMover::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
-	AActor* Owner = GetOwner();
-	FString Name = (*Owner).GetActorNameOrLabel();
-	FVector ActorLocation = (*Owner).GetActorLocation();
-	FString OwnerLocationString = ActorLocation.ToCompactString();
+
+	FVector CurrentLocation = GetOwner()->GetActorLocation();
+	FVector TargetLocation = OriginalLocation + MoveOffset;
+	float speed = FVector::Distance(OriginalLocation, TargetLocation) / MoveTime;
 
 
-	UE_LOG(LogTemp, Display, TEXT("%s"), *OwnerLocationString);
-
+	FVector NewLocation = FMath::VInterpConstantTo(CurrentLocation,TargetLocation,DeltaTime,speed);
+	GetOwner()->SetActorLocation(NewLocation);
 }
 

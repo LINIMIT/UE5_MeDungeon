@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class PracticeTarget : TargetRules
 {
-	public PracticeTarget( TargetInfo Target) : base(Target)
+	public PracticeTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
