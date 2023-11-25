@@ -3,6 +3,7 @@
 
 #include "Grabber.h"
 #include "Engine/World.h"
+#include "DrawDebugHelpers.h"
 // Sets default values for this component's properties
 UGrabber::UGrabber()
 {
@@ -20,7 +21,7 @@ void UGrabber::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+
 }
 
 
@@ -29,13 +30,24 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FRotator MyRotation = GetComponentRotation(); //컴포넌트의 회전값을 가져옴
-	FString RotationString = MyRotation.ToCompactString();
+	//FRotator MyRotation = GetComponentRotation(); //컴포넌트의 회전값을 가져옴
+	//FString RotationString = MyRotation.ToCompactString();
 
-	UE_LOG(LogTemp, Display, TEXT("Grabber Rotation : %s"), *RotationString);
+	//UE_LOG(LogTemp, Display, TEXT("Grabber Rotation : %s"), *RotationString);
 
-	float Time = GetWorld()->TimeSeconds;
-	UE_LOG(LogTemp, Display, TEXT("Time : %f"), Time);
+	//float Time = GetWorld()->TimeSeconds;
+	//UE_LOG(LogTemp, Display, TEXT("Time : %f"), Time);
+
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		FVector Location = GetComponentLocation();
+		FVector End = Location + GetForwardVector() *MaxGrabDistance;
+
+		DrawDebugSphere(world, Location, 25.f, 24, FColor::Red);
+		DrawDebugLine(world, Location, End, FColor::Blue);
+		DrawDebugPoint(world, End, 15.f, FColor::Red);
+	}
 
 }
 
