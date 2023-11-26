@@ -30,21 +30,21 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	//FRotator MyRotation = GetComponentRotation(); //컴포넌트의 회전값을 가져옴
-	//FString RotationString = MyRotation.ToCompactString();
+	
 
-	//UE_LOG(LogTemp, Display, TEXT("Grabber Rotation : %s"), *RotationString);
 
-	//float Time = GetWorld()->TimeSeconds;
-	//UE_LOG(LogTemp, Display, TEXT("Time : %f"), Time);
+}
+
+void UGrabber::Grab()
+{
 	FVector Location = GetComponentLocation();
 	FVector End = Location + GetForwardVector() * MaxGrabDistance;
 
-	
-		DrawDebugSphere(GetWorld(), Location, 25.f, 24, FColor::Red);
-		DrawDebugLine(GetWorld(), Location, End, FColor::Blue);
-		DrawDebugPoint(GetWorld(), End, 15.f, FColor::Red);
-	
+
+	DrawDebugSphere(GetWorld(), Location, 25.f, 24, FColor::Red);
+	DrawDebugLine(GetWorld(), Location, End, FColor::Blue);
+	DrawDebugPoint(GetWorld(), End, 15.f, FColor::Red);
+
 	FHitResult HitResult;
 	FCollisionShape Sphere = FCollisionShape::MakeSphere(GrabRadius);
 	bool HasHit = GetWorld()->SweepSingleByChannel(
@@ -61,6 +61,14 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		AActor* HitActor = HitResult.GetActor();
 		UE_LOG(LogTemp, Display, TEXT("Actor Name : %s "), *HitActor->GetActorNameOrLabel());
 	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("No Actor hit"));
+
+	}
+}
+void UGrabber::Release()
+{
+	UE_LOG(LogTemp, Display, TEXT("Release"));
 
 }
-
