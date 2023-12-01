@@ -28,13 +28,19 @@ void UGrabber::BeginPlay()
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
+
 	UPhysicsHandleComponent* PhyscisHandle = GetPhyscisHandle();
 	if (PhyscisHandle == nullptr)
 	{
 		return;
 	}
-	
+
+	if (PhyscisHandle->GetGrabbedComponent() != nullptr)
+	{
+		FVector TargetLocation = GetComponentLocation() + GetForwardVector() * HoldDistance;
+		PhyscisHandle->SetTargetLocationAndRotation(TargetLocation, GetComponentRotation());
+	}
+
 
 	FVector Location = GetComponentLocation();
 	FVector End = Location + GetForwardVector() * MaxGrabDistance;
@@ -44,8 +50,6 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	DrawDebugLine(GetWorld(), Location, End, FColor::Blue);
 	DrawDebugPoint(GetWorld(), End, 15.f, FColor::Red);
 
-	FVector TargetLocation = GetComponentLocation() + GetForwardVector() * HoldDistance;
-	PhyscisHandle->SetTargetLocationAndRotation(TargetLocation,GetComponentRotation());
 }
 
 void UGrabber::Grab() //물건을 잡았을 때
@@ -61,9 +65,9 @@ void UGrabber::Grab() //물건을 잡았을 때
 	FVector End = Location + GetForwardVector() * MaxGrabDistance;
 
 
-	DrawDebugSphere(GetWorld(), Location, 25.f, 24, FColor::Red, false, 5);
+	/*DrawDebugSphere(GetWorld(), Location, 25.f, 24, FColor::Red, false, 5);
 	DrawDebugLine(GetWorld(), Location, End, FColor::Blue, false, 5);
-	DrawDebugPoint(GetWorld(), End, 15.f, FColor::Red, false, 5);
+	DrawDebugPoint(GetWorld(), End, 15.f, FColor::Red, false, 5);*/
 
 	FHitResult HitResult;
 	FCollisionShape Sphere = FCollisionShape::MakeSphere(GrabRadius);
@@ -78,25 +82,32 @@ void UGrabber::Grab() //물건을 잡았을 때
 
 	if (HasHit)
 	{
+		UPrimitiveComponent* HitComponent = HitResult.GetComponent();
+
+
 		PhyscisHandle->GrabComponentAtLocationWithRotation(
-			HitResult.GetComponent(),
+			HitComponent,
 			NAME_None,
 			HitResult.ImpactPoint,
 			GetComponentRotation()
 		);
 	}
-	else
-	{
-		UE_LOG(LogTemp, Display, TEXT("Nothing"));
 
-	}
 }
 void UGrabber::Release()
 {
-	UE_LOG(LogTemp, Display, TEXT("Release"));
+	UPhysicsHandleComponent* PhysicsHandle = GetPhyscisHandle();
+	if (PhysicsHandle == nullptr)
+	{
+		return;
+	}
+	if (PhysicsHandle->GetGrabbedComponent() != nullptr)
+	{
+		PhysicsHandle->ReleaseComponent();
+	}
 
 }
-UPhysicsHandleComponent*  UGrabber::GetPhyscisHandle() const
+UPhysicsHandleComponent* UGrabber::GetPhyscisHandle() const
 {
 	UPhysicsHandleComponent* Result = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 	if (Result == nullptr)
